@@ -74,4 +74,16 @@ describe('Product Repository Unit Tests', () => {
       price: foundProduct.price
     });
   });
+
+  it('should find all product', async () => {
+    const productRepository = new ProductRepository();
+    const product = new Product('1', 'Product 1', 100);
+    const product2 = new Product('2', 'Product 2', 200);
+    const product3 = new Product('3', 'Product 3', 300);
+    productRepository.create(product);
+    productRepository.create(product2);
+    productRepository.create(product3);
+    const foundProducts = await productRepository.findAll();
+    expect(foundProducts).toHaveLength(3);
+  })
 });
