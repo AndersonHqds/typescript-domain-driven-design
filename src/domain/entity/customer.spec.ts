@@ -1,5 +1,12 @@
+import EnviaConsoleLog1Handler from "../event/customer/handlers/envia-console-log-1.handler";
+import EnviaConsoleLog2Handler from "../event/customer/handlers/envia-console-log-2.handler";
+import EnviaConsoleLogHandler from "../event/customer/handlers/envia-console-log.handler";
 import Address from "./address";
 import Customer from "./customer";
+
+jest.mock('../event/customer/handlers/envia-console-log-1.handler');
+jest.mock('../event/customer/handlers/envia-console-log-2.handler');
+jest.mock("../event/customer/handlers/envia-console-log.handler")
 
 describe('Customer unit tests', () => {
   it('should throw error when id is empty', () => {
@@ -50,5 +57,18 @@ describe('Customer unit tests', () => {
     expect(customer.rewardPoints).toBe(10);
     customer.addRewardPoints(10);
     expect(customer.rewardPoints).toBe(20);
-  })
+  });
+
+  it("should call the notify when a Customer is created", () => {
+    new Customer("123", "John");
+    expect((EnviaConsoleLog1Handler as jest.Mock).mock.instances[0].handle).toHaveBeenCalled();
+    expect((EnviaConsoleLog2Handler as jest.Mock).mock.instances[0].handle).toHaveBeenCalled();
+  });
+
+  it("should call the notify when a Customer change address", () => {
+    const customer = new Customer("123", "John");
+    const address = new Address("Street 1", 1, "Zip", "City");
+    customer.changeAddress(address);
+    expect((EnviaConsoleLogHandler as jest.Mock).mock.instances[0].handle).toHaveBeenCalled();
+  });
 });
